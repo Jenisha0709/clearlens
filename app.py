@@ -4,6 +4,7 @@ from src.pipeline import clean_dataset
 
 app = Flask(__name__)
 
+# Folders
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "outputs"
 
@@ -16,13 +17,16 @@ def index():
         file = request.files.get("file")
 
         if not file or file.filename == "":
-            return "No file selected"
+            return render_template("index.html", error="No file selected")
 
         filename = file.filename
         ext = os.path.splitext(filename)[1].lower()
 
         if ext not in [".csv", ".pdf"]:
-            return "Only CSV and text-based PDF files are supported"
+            return render_template(
+                "index.html",
+                error="Only CSV and text-based PDF files are supported"
+            )
 
         input_path = os.path.join(UPLOAD_FOLDER, filename)
         output_path = os.path.join(
@@ -32,7 +36,10 @@ def index():
 
         file.save(input_path)
 
+        # Run cleaning pipeline
         df, dqi_before, dqi_after, plots, nlg_summary = clean_dataset(input_path)
+
+        # Save cleaned dataset
         df.to_csv(output_path, index=False)
 
         return render_template(
@@ -46,10 +53,14 @@ def index():
 
     return render_template("index.html")
 
+
 @app.route("/download")
 def download():
     file_path = request.args.get("file")
     return send_file(file_path, as_attachment=True)
 
+
+# 🔹 REQUIRED FOR DEPLOYMENT (Render / Cloud)
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
