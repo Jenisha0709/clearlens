@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+venv/
+
+# Uploaded & generated files
+uploads/
+outputs/
+static/plots/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ClearLens</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>ClearLens</h1>
+    <p class="subtitle">Adaptive Data Cleaning & Analytics System</p>
+
+    <!-- Upload -->
+    <form method="POST" enctype="multipart/form-data">
+        <div class="upload-box">
+            <p><strong>Upload your dataset</strong></p>
+            <input type="file" name="file" accept=".csv,.pdf" required>
+        </div>
+
+        <button type="submit"
+            onclick="this.disabled=true; this.innerText='Processing...'; this.form.submit();">
+            Upload & Clean Dataset
+        </button>
+    </form>
+
+    {% if dqi_before is defined %}
+    <hr>
+
+    <div class="dashboard">
+
+        <!-- LEFT PANEL -->
+        <div class="panel">
+            <h3>Dataset Quality Index</h3>
+            <p>Before Cleaning: <strong>{{ dqi_before }}%</strong></p>
+            <p>After Cleaning: <strong>{{ dqi_after }}%</strong></p>
+
+            <h3>Automated Data Insight (NLG)</h3>
+            <div class="nlg-box">
+                {{ nlg_summary }}
+            </div>
+
+            <a href="/download?file={{ download_file }}">
+                <button>Download Cleaned Dataset</button>
+            </a>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="panel">
+            <h3>Visualizations</h3>
+            {% for plot in plots %}
+                <img src="{{ url_for('static', filename=plot) }}" class="plot-img">
+            {% endfor %}
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
