@@ -1,29 +1,14 @@
-const fileInput = document.querySelector('input[type="file"]');
-const uploadBox = document.querySelector('.upload-box');
-const form = document.querySelector('form');
-const button = document.querySelector('button');
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.querySelector("input[type=file]");
+    const box = document.querySelector(".upload-box");
 
-if (fileInput) {
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-            uploadBox.innerHTML = `
-                <p>📄 Selected file</p>
-                <strong>${fileInput.files[0].name}</strong>
-            `;
-        }
-    });
-}
-
-if (form) {
-    form.addEventListener('submit', () => {
-        button.disabled = true;
-        button.innerText = "⏳ Processing dataset…";
-    });
-}
-
-window.onload = () => {
-    const dashboard = document.querySelector('.dashboard');
-    if (dashboard) {
-        dashboard.scrollIntoView({ behavior: "smooth" });
+    if (input) {
+        input.addEventListener("change", () => {
+            if (input.files.length > 0) {
+                const p = document.createElement("p");
+                p.innerText = "Selected: " + input.files[0].name;
+                box.appendChild(p);
+            }
+        });
     }
-};
+});

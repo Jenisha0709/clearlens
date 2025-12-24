@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, send_file
 import os
 from src.pipeline import clean_dataset
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "outputs"
@@ -16,22 +16,14 @@ def index():
         file = request.files.get("file")
 
         if not file or file.filename == "":
-            return render_template("index.html", error="No file selected")
+            return render_template("index.html", error="Please select a file")
 
-        filename = file.filename
-        ext = os.path.splitext(filename)[1].lower()
-
+        ext = os.path.splitext(file.filename)[1].lower()
         if ext not in [".csv", ".pdf"]:
-            return render_template(
-                "index.html",
-                error="Only CSV and text-based PDF files are supported"
-            )
+            return render_template("index.html", error="Only CSV or PDF files are supported")
 
-        input_path = os.path.join(UPLOAD_FOLDER, filename)
-        output_path = os.path.join(
-            OUTPUT_FOLDER,
-            f"cleaned_{os.path.splitext(filename)[0]}.csv"
-        )
+        input_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        output_path = os.path.join(OUTPUT_FOLDER, f"cleaned_{file.filename}.csv")
 
         file.save(input_path)
 
@@ -58,11 +50,5 @@ def download():
     return "File not found", 404
 
 
-@app.route("/health")
-def health():
-    return "OK", 200
-
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=10000)

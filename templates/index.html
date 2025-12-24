@@ -3,54 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <title>ClearLens</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Force reload CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
 </head>
 <body>
 
 <div class="container">
 
+    <!-- HEADER -->
     <div class="header">
         <h1>ClearLens</h1>
-        <p>Adaptive Data Cleaning & Visual Analytics</p>
+        <p>Adaptive Data Cleaning & Visual Analytics Platform</p>
     </div>
 
+    <!-- UPLOAD CARD -->
     <div class="card">
         <form method="POST" enctype="multipart/form-data">
+
             <div class="upload-box">
                 <p>📂 Upload your dataset</p>
-                <small>CSV or text-based PDF</small><br>
+                <small>Supported formats: CSV, text-based PDF</small>
+                <br><br>
+
+                <!-- IMPORTANT: name="file" -->
                 <input type="file" name="file" accept=".csv,.pdf" required>
             </div>
 
             <button type="submit">🚀 Clean Dataset</button>
         </form>
+
+        {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+        {% endif %}
     </div>
 
+    <!-- RESULTS DASHBOARD -->
     {% if dqi_before is defined %}
     <div class="card dashboard">
 
+        <!-- LEFT PANEL -->
         <div>
+
             <div class="metric">
-                <h3>Dataset Quality Index</h3>
-                <p>Before: <strong>{{ dqi_before }}%</strong></p>
-                <p>After: <strong>{{ dqi_after }}%</strong></p>
+                <h3>Dataset Quality Index (DQI)</h3>
+                <p>Before Cleaning: <strong>{{ dqi_before }}%</strong></p>
+                <p>After Cleaning: <strong>{{ dqi_after }}%</strong></p>
             </div>
 
             <div class="metric">
-                <h3>Automated Insight (NLG)</h3>
-                <div class="nlg-box">{{ nlg_summary }}</div>
+                <h3>Automated Insight</h3>
+                <div class="nlg">
+                    {{ nlg_summary }}
+                </div>
             </div>
 
             <a href="/download?file={{ download_file }}">
-                <button class="download-btn">⬇ Download Cleaned Dataset</button>
+                <button class="download">⬇ Download Cleaned Dataset</button>
             </a>
+
         </div>
 
+        <!-- RIGHT PANEL -->
         <div class="visuals">
             <h3>Visual Analytics</h3>
-            {% for plot in plots %}
-                <img src="{{ url_for('static', filename=plot) }}">
-            {% endfor %}
+
+            {% if plots %}
+                {% for plot in plots %}
+                    <img src="{{ url_for('static', filename=plot) }}">
+                {% endfor %}
+            {% else %}
+                <p>No numeric columns found for visualization.</p>
+            {% endif %}
         </div>
 
     </div>
@@ -58,6 +84,8 @@
 
 </div>
 
+<!-- SAFE JS -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>
